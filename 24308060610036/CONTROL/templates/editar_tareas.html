@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Tarea - TaskManager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'discord-dark': '#2c2f33',
+                        'discord-darker': '#23272a',
+                        'discord-light': '#36393f',
+                        'discord-accent': '#5865f2',
+                        'discord-hover': '#4752c4',
+                        'discord-text': '#dcddde',
+                        'discord-text-muted': '#72767d'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-discord-darker min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-discord-dark w-full max-w-md rounded-lg shadow-2xl border border-discord-light overflow-hidden">
+
+        <!-- Header -->
+        <div class="bg-discord-accent p-6 text-center">
+            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="text-discord-accent text-2xl font-bold">✏️</span>
+            </div>
+            <h1 class="text-white text-2xl font-bold">Editar Tarea</h1>
+            <p class="text-discord-text text-sm mt-1">Modifica el título de tu tarea</p>
+        </div>
+
+        <!-- Form -->
+        <div class="p-6">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="mb-4 p-3 rounded text-sm {% if category == 'success' %}bg-green-500/20 text-green-400 border border-green-500/30{% else %}bg-red-500/20 text-red-400 border border-red-500/30{% endif %}">
+                    {{ message }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form action="/editar_tarea/{{ tarea._id }}" method="POST" class="space-y-4">
+                <div>
+                    <label class="block text-discord-text text-sm font-medium mb-2">Título de la tarea</label>
+                    <input type="text" name="titulo" value="{{ tarea.titulo }}" required
+                           class="w-full bg-discord-light border border-discord-text-muted rounded px-4 py-3 text-white placeholder-discord-text-muted focus:outline-none focus:border-discord-accent focus:ring-1 focus:ring-discord-accent transition-colors">
+                </div>
+
+                <div class="flex gap-3">
+                    <button type="submit" class="flex-1 bg-discord-accent hover:bg-discord-hover text-white font-bold py-3 rounded transition-colors">
+                        Guardar Cambios
+                    </button>
+                    <a href="/dashboard" class="flex-1 bg-discord-light hover:bg-discord-text-muted text-discord-text font-bold py-3 rounded text-center transition-colors">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

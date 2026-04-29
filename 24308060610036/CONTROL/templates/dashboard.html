@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema de Tareas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'discord-dark': '#2c2f33',
+                        'discord-darker': '#23272a',
+                        'discord-light': '#36393f',
+                        'discord-accent': '#5865f2',
+                        'discord-hover': '#4752c4',
+                        'discord-text': '#dcddde',
+                        'discord-text-muted': '#72767d'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .discord-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .discord-scrollbar::-webkit-scrollbar-track {
+            background: #006eff;
+        }
+        .discord-scrollbar::-webkit-scrollbar-thumb {
+            background: #5865f2;
+            border-radius: 4px;
+        }
+        .discord-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #4752c4;
+        }
+    </style>
+</head>
+<body class="bg-discord-darker text-discord-text flex h-screen">
+
+    <!-- Sidebar -->
+    <div class="bg-discord-dark w-60 flex flex-col">
+        <!-- Logo/Header -->
+        <div class="bg-discord-accent p-4 border-b border-discord-light">
+            <h1 class="text-white font-bold text-lg">📋 TaskManager</h1>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 p-2 discord-scrollbar overflow-y-auto">
+            <div class="mb-6">
+                <h3 class="text-discord-text-muted text-xs font-semibold uppercase tracking-wide px-2 mb-2">Menú</h3>
+                <div class="space-y-1">
+                    <div class="flex items-center px-2 py-2 text-sm rounded cursor-pointer bg-discord-light text-white">
+                        <span class="mr-3">📝</span>
+                        <span>Mis Tareas</span>
+                    </div>
+                    <div class="flex items-center px-2 py-2 text-sm rounded cursor-pointer text-discord-text-muted hover:bg-discord-light hover:text-white transition-colors">
+                        <span class="mr-3">👤</span>
+                        <span>Perfil</span>
+                    </div>
+                    <div class="flex items-center px-2 py-2 text-sm rounded cursor-pointer text-discord-text-muted hover:bg-discord-light hover:text-white transition-colors">
+                        <span class="mr-3">⚙️</span>
+                        <span>Configuración</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="bg-discord-light rounded-lg p-3">
+                <h4 class="text-discord-text-muted text-xs font-semibold mb-2">ESTADÍSTICAS</h4>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-discord-text-muted">Total tareas:</span>
+                        <span class="text-white">{{ tareas|length }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-discord-text-muted">Pendientes:</span>
+                        <span class="text-yellow-400">{{ tareas|selectattr('estado', 'equalto', 'pendiente')|list|length }}</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- User Panel -->
+        <div class="bg-discord-light p-3 border-t border-discord-dark">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-discord-accent rounded-full flex items-center justify-center text-white font-bold mr-3">
+                        {{ session.user_name[0].upper() }}
+                    </div>
+                    <div>
+                        <div class="text-white text-sm font-medium">{{ session.user_name }}</div>
+                        <div class="text-discord-text-muted text-xs">Online</div>
+                    </div>
+                </div>
+                <a href="/logout" class="text-discord-text-muted hover:text-red-400 transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col bg-discord-light">
+
+        <!-- Header -->
+        <header class="bg-discord-dark p-4 border-b border-discord-light shadow-sm">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-white text-xl font-bold"># Mis Tareas</h2>
+                    <p class="text-discord-text-muted text-sm">Gestiona tus tareas pendientes</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="bg-discord-accent hover:bg-discord-hover text-white px-4 py-2 rounded text-sm font-medium transition-colors">
+                        + Nueva Tarea
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <main class="flex-1 p-6 discord-scrollbar overflow-y-auto">
+
+            <!-- Add Task Form -->
+            <div class="bg-discord-dark rounded-lg p-4 mb-6 border border-discord-light">
+                <form action="/nueva_tarea" method="POST" class="flex gap-3">
+                    <input type="text" name="titulo" placeholder="¿Qué tarea quieres añadir?" required
+                           class="flex-1 bg-discord-light border border-discord-text-muted rounded px-4 py-3 text-white placeholder-discord-text-muted focus:outline-none focus:border-discord-accent focus:ring-1 focus:ring-discord-accent">
+                    <button type="submit" class="bg-discord-accent hover:bg-discord-hover text-white px-6 py-3 rounded font-medium transition-colors flex items-center">
+                        <span class="mr-2">+</span>
+                        Añadir
+                    </button>
+                </form>
+            </div>
+
+            <!-- Tasks List -->
+            <div class="space-y-3">
+                {% if tareas %}
+                    {% for tarea in tareas %}
+                    <div class="bg-discord-dark rounded-lg p-4 border border-discord-light hover:border-discord-accent transition-colors group">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 rounded-full {% if tarea.estado == 'pendiente' %}bg-yellow-400{% else %}bg-green-400{% endif %}"></div>
+                                <span class="text-white font-medium">{{ tarea.titulo }}</span>
+                            </div>
+                            <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                {% if tarea.estado == 'pendiente' %}
+                                <form action="/completar_tarea/{{ tarea._id }}" method="POST" class="inline">
+                                    <button type="submit" class="text-green-400 hover:text-green-300 transition-colors" title="Marcar como completada">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </button>
+                                </form>
+                                {% endif %}
+                                <a href="/editar_tarea/{{ tarea._id }}" class="text-blue-400 hover:text-blue-300 transition-colors" title="Editar tarea">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                                    </svg>
+                                </a>
+                                <form action="/eliminar_tarea/{{ tarea._id }}" method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de eliminar esta tarea?')">
+                                    <button type="submit" class="text-red-400 hover:text-red-300 transition-colors" title="Eliminar tarea">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        {% if tarea.fecha %}
+                        <div class="mt-2 text-discord-text-muted text-xs">
+                            Creada: {{ tarea.fecha.strftime('%d/%m/%Y %H:%M') }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <!-- Empty State -->
+                    <div class="bg-discord-dark rounded-lg p-8 border border-discord-light text-center">
+                        <div class="text-6xl mb-4">📝</div>
+                        <h3 class="text-white text-xl font-bold mb-2">No tienes tareas pendientes</h3>
+                        <p class="text-discord-text-muted mb-4">¡Crea tu primera tarea para empezar!</p>
+                        <button class="bg-discord-accent hover:bg-discord-hover text-white px-6 py-3 rounded font-medium transition-colors">
+                            Crear primera tarea
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+</body>
+</html>

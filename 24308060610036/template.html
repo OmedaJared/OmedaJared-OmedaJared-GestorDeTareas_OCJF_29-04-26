@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Creativo | MongoDB Atlas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-6">
+
+    <div class="glass w-full max-w-lg p-8 shadow-2xl">
+        <h1 class="text-3xl font-bold text-white mb-2 text-center">Nuevo Proyecto</h1>
+        <p class="text-indigo-100 text-center mb-8 text-sm">Conectado a MongoDB Atlas Cloud</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="mb-4 p-3 rounded {% if category == 'success' %}bg-green-400/30 text-green-100{% else %}bg-red-400/30 text-red-100{% endif %} text-sm">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form action="/enviar" method="POST" class="space-y-5">
+            <div>
+                <label class="block text-white text-sm font-medium mb-1">Título del Proyecto</label>
+                <input type="text" name="titulo" required class="w-full bg-white/20 border-none rounded-lg p-3 text-white placeholder-indigo-200 focus:ring-2 focus:ring-white outline-none transition-all" placeholder="Ej: Portal Cuántico">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-white text-sm font-medium mb-1">Autor</label>
+                    <input type="text" name="autor" required class="w-full bg-white/20 border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-white outline-none" placeholder="Nombre">
+                </div>
+                <div>
+                    <label class="block text-white text-sm font-medium mb-1">Categoría</label>
+                    <select name="categoria" class="w-full bg-white/20 border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-white outline-none">
+                        <option class="text-gray-800" value="arte">Arte Digital</option>
+                        <option class="text-gray-800" value="dev">Desarrollo</option>
+                        <option class="text-gray-800" value="diseno">Diseño</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-white text-sm font-medium mb-1">Descripción</label>
+                <textarea name="descripcion" rows="3" class="w-full bg-white/20 border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-white outline-none" placeholder="Describe tu idea..."></textarea>
+            </div>
+
+            <button type="submit" class="w-full bg-white text-indigo-700 font-bold py-3 rounded-lg hover:bg-indigo-50 transition-colors shadow-lg">
+                Guardar en MongoDB
+            </button>
+        </form>
+    </div>
+
+</body>
+</html>

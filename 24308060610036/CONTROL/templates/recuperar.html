@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña - TaskManager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'discord-dark': '#2c2f33',
+                        'discord-darker': '#23272a',
+                        'discord-light': '#36393f',
+                        'discord-accent': '#5865f2',
+                        'discord-hover': '#4752c4',
+                        'discord-text': '#dcddde',
+                        'discord-text-muted': '#72767d'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-discord-darker min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-discord-dark w-full max-w-md rounded-lg shadow-2xl border border-discord-light overflow-hidden">
+
+        <!-- Header -->
+        <div class="bg-discord-accent p-6 text-center">
+            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="text-discord-accent text-2xl font-bold">🔐</span>
+            </div>
+            <h1 class="text-white text-2xl font-bold">Recuperar Contraseña</h1>
+            <p class="text-discord-text text-sm mt-1">Te enviaremos instrucciones a tu correo</p>
+        </div>
+
+        <!-- Form -->
+        <div class="p-6">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="mb-4 p-3 rounded text-sm {% if category == 'success' %}bg-green-500/20 text-green-400 border border-green-500/30{% else %}bg-red-500/20 text-red-400 border border-red-500/30{% endif %}">
+                    {{ message }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form action="/recuperar" method="POST" class="space-y-4">
+                <div>
+                    <label class="block text-discord-text text-sm font-medium mb-2">Correo electrónico</label>
+                    <input type="email" name="email" required
+                           class="w-full bg-discord-light border border-discord-text-muted rounded px-4 py-3 text-white placeholder-discord-text-muted focus:outline-none focus:border-discord-accent focus:ring-1 focus:ring-discord-accent transition-colors">
+                    <p class="text-discord-text-muted text-xs mt-1">
+                        Ingresa el correo asociado a tu cuenta
+                    </p>
+                </div>
+
+                <button type="submit" class="w-full bg-discord-accent hover:bg-discord-hover text-white font-bold py-3 rounded transition-colors">
+                    Enviar Instrucciones
+                </button>
+            </form>
+
+            <!-- Links -->
+            <div class="mt-6 text-center">
+                <a href="/" class="text-discord-accent hover:underline text-sm transition-colors">
+                    ← Volver al inicio de sesión
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
